@@ -1,0 +1,136 @@
+// MB5370 - Module 4, Global Analisis
+// Assemssment Workshop 2
+
+// Darius HUISMAN
+
+// Assignment - Mapping the world’s deep ocean ecosystems.
+
+// Configuring map with satellite view
+Map.setOptions('SATELLITE')
+
+// Part 1. Import the data
+var dataset = ee.Image("NOAA/NGDC/ETOPO1");
+print (dataset);
+// Select bedrock
+var bedrock = dataset.select('bedrock');
+print (bedrock);
+
+
+// Part 2. Build a raster map of each of the following major ecosystem types.
+//Map.addLayer(bedrock);
+//Map.addLayer(bedrock, depth, 'Bedrock');
+
+// Hadal trenches and troughs (>6000m depth)
+Map.addLayer(bedrock.lt(-6000).selfMask(), 
+              {palette: 'red'},
+              'Hadal trenches and troughs (>6000m depth)');
+
+// Abyssal plains (3000-6000m depth)
+Map.addLayer(bedrock.gt(-6000).and(bedrock.lt(-3000)).selfMask(), 
+              {palette: 'orange'}, 
+              'Abyssal plains (3000-6000m depth)');
+              
+// Continental and island slopes (250-3000m depth)
+Map.addLayer(bedrock.gt(-3000).and(bedrock.lt(-250)).selfMask(), 
+              {palette: 'yellow'}, 
+              'Continental and island slopes (250-3000m depth)');
+            
+// Submarine canyons (deeper than 200m, slopes of >6 degrees)
+// Use terrain, an algorithm that returns several topographic variables from an elevation image
+var terrain = ee.Terrain.products(bedrock);
+print ('terrain', terrain ); // print it to see what's inside
+// make images from the bands we are interested in
+var slope = terrain.select(['slope']); 
+print (slope);
+Map.addLayer(bedrock.lt(-200).and(slope.gt(6)).selfMask(), 
+              {palette: 'violet'}, 
+              'Submarine canyons (deeper than 200m, slopes of >6 degrees)');
+
+
+// Part 3. Add at least one vector dataset to your map.
+
+// Protected areas
+// Import data of protected areas
+var protected_areas = ee.FeatureCollection("WCMC/WDPA/current/polygons");
+//print(protected_areas.first());
+
+// Add layer with all protected areas
+//Map.addLayer(protected_areas, {color: 'black'}, 'Protected areas');
+
+// Select MPAs and CPAs
+var mpas = protected_areas.filterMetadata('REALM', 'equals', 'Marine'); // marine protected areas
+var cpas = protected_areas.filterMetadata('REALM', 'equals', 'Coastal'); // coastal prtected areas
+//print(mpas); // too many elements
+//print(cpas); // too many elements
+
+// Add layers for MPAs and CPAs
+Map.addLayer(mpas, {color: 'green'}, 'MPAs');
+Map.addLayer(cpas, {color: 'lightgreen'}, 'CPAs');
+
+
+// Part 4. Add a map legend
+
+// Create the legend panel
+var legend = ui.Panel({
+  style: {
+    position: 'bottom-left',
+    padding: '8px 15px',
+    backgroundColor: 'white'
+  }
+});
+
+// Create the legend title
+var legendTitle = ui.Label({
+  value: 'Deep Ocean Ecosystems & MPAs',
+  style: {
+    fontWeight: 'bold',
+    fontSize: '16px',
+    margin: '0 0 10px 0',
+    padding: '0'
+  }
+});
+legend.add(legendTitle);
+
+// Define the colors and names as previously done in map layers
+var palette = ['red', 'orange', 'yellow', 'violet', 'green', 'lightgreen'];
+var names = [
+  'Hadal trenches and troughs (>6000m)',
+  'Abyssal plains (3000-6000m)',
+  'Continental and island slopes (250-3000m)',
+  'Submarine canyons (>200m, slope >6°)',
+  'Marine Protected Areas (MPAs)',
+  'Coastal Protected Areas (CPAs)'
+];
+
+// Build the rows of the legend with for loop
+for (var i = 0; i < palette.length; i++) {
+  // Color box
+  var colorBox = ui.Label({
+    style: {
+      backgroundColor: palette[i],
+      padding: '8px',
+      margin: '0 6px 4px 0'
+    }
+  });
+  
+  // Text label
+  var description = ui.Label({
+    value: names[i],
+    style: {
+      margin: '2px 0 4px 0',
+      fontSize: '13px'
+    }
+  });
+ // Place corresponding color and text on saw row
+  var row = ui.Panel({
+    widgets: [colorBox, description],
+    layout: ui.Panel.Layout.Flow('horizontal')
+  });
+  
+  legend.add(row);
+}
+
+// Add the legend to the map
+Map.add(legend);
+
+

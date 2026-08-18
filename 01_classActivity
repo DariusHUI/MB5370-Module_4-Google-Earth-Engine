@@ -1,0 +1,27 @@
+// MB5370 - Module 4, Global Analisis - Workshop 1
+// Class Activity
+
+// Configuring your map
+Map.setOptions('SATELLITE')
+
+// Search "Taranaki, New Zealand"
+Map.setCenter(4.42, 50.78, 4);
+
+
+// Import data (world map of biomes)
+var dataset = ee.Image("OpenLandMap/PNV/PNV_BIOME-TYPE_BIOME00K_C/v01")
+print (dataset) // Look at the data properties
+// Add it to the map
+//Map.addLayer(dataset)
+// Create colours variable with different shades of blue (going from darker to lighter sahdes)
+var colours = {palette: ['darkblue', 'blue', '1F51FF', 'cyan', 'lightblue', 'white']};
+// Change colours of the data layer to the map and add a layer name
+Map.addLayer(dataset, colours, 'Biomes colours');
+
+// Import feature data (European Primary Forest Dataset - Points)
+var european_forests = ee.FeatureCollection("HU_BERLIN/EPFD/V2/points");
+print (european_forests);
+// Add to map
+//Map.addLayer(european_forests);
+// Change color of points and name the layer
+Map.addLayer(european_forests, {color: 'red'}, 'European Primary Forests');

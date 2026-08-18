@@ -1,0 +1,64 @@
+// Use two forward slashes for writing comments.
+
+/* You can also use slashes and stars to write multi comment lines if you like */
+
+// The first thing you do in any programming language:
+print ('Hello, World!'); // string
+
+// Variables are used to store objects, and are defined using the keyword var.
+var the_answer = 42; //number
+//print (the_answer)
+
+var city = 'San Francisco'; //string
+//print (city); 
+
+var population = 873965; // number
+//print (population);
+
+print('The value for the population variable is:', population);
+
+// Create a list with name a US cities
+var cities = ['San Francisco', 'Los Angeles', 'New York', 'Atlanta']; //list
+print (cities);
+
+// Create an object called cityData with some information about San Francisco.
+var cityData = {
+    'city': 'San Francisco',
+    'coordinates': [-122.4194, 37.7749],
+    'population': 873965
+}; // object
+print(cityData);
+
+// Function
+// Functions can be defined as a way to reuse code and make it easier to read
+var my_hello_function = function(string) {
+  return 'Hello ' + string + '!';
+};
+print(my_hello_function('world'));
+
+// Other example of a function
+var greet = function(name) {
+    return 'Hello ' + name;
+};
+print(greet('World'));
+print(greet('Readers')); 
+
+
+// Computing with Earth Engine
+
+// Make two variables representing store numbers
+var a = 1;
+var b = 2;
+// print (a, '&', b);
+// add the two variables together
+var result = a + b;
+print (result, 'javascript way');
+
+// add the two variables using the appropriate function from Earth Engine
+var result = ee.Number(a).add(b);
+print (result, 'Earth Engine way');
+
+// Other example using the ee.List.sequence function from Earth Engine
+var yearList = ee.List.sequence(1980, 2020, 5);
+print(yearList);
+

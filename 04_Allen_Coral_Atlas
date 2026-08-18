@@ -1,0 +1,228 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var Heron_Island = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([151.9110602989197, -23.442028629973443]),
+        {
+          "Station": "Heron Island",
+          "system:index": "0"
+        }),
+    Hamilton_Island = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([148.9569998828528, -20.345925505360395]),
+        {
+          "Station": "Hamilton Island",
+          "system:index": "0"
+        }),
+    Lizard_Island = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([145.4461857314264, -14.66771927635723]),
+        {
+          "Station": "Lizard Island",
+          "system:index": "0"
+        }),
+    Daydream_Island = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([148.81572813137697, -20.251682746361567]),
+        {
+          "Station": "Daydream Island",
+          "system:index": "0"
+        }),
+    Orpheus_Island = 
+    /* color: #bf04c2 */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([146.49001702838254, -18.612681995507792]),
+        {
+          "Station": "Orpheus Island",
+          "system:index": "0"
+        }),
+    Moorea_Coral_Reef_LTER = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([-149.90984013126854, -17.495287291516128]),
+        {
+          "Station": "Moorea_Coral_Reef_LTER",
+          "system:index": "0"
+        }),
+    One_Tree_Island = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([152.09175402080157, -23.506760275589553]),
+        {
+          "Station": "One Tree Island Research Station",
+          "system:index": "0"
+        }),
+    Hawaii_Institute_of_Marine_Biology = 
+    /* color: #ffc82d */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([-157.78803068237687, 21.432577296439362]),
+        {
+          "Station": "Hawaii Institute of Marine Biology",
+          "system:index": "0"
+        }),
+    Kimberley_Marine_Research_Station = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([123.0098474327438, -16.452526337955852]),
+        {
+          "Station": "Kimberley Marine Research Station",
+          "system:index": "0"
+        }),
+    Coral_Bay = 
+    /* color: #bf04c2 */
+    /* shown: false */
+    ee.Feature(
+        ee.Geometry.Point([113.76971124591009, -23.142260846498118]),
+        {
+          "Station": "Coral Bay Research Station",
+          "system:index": "0"
+        });
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// MB5370 - Module 4, Global Analisis
+// Darius HUISMAN
+
+// Workshop 4 - Allen Coral Atlas
+
+// Analysis structure
+
+  // 1. Global variables - data imports and any constants can go in here
+  // 2. Research station locations - here you’ll probably put your research stations
+  // 3. ACA operations - this is where you’ll get ACA set
+  // 4. Vector operations - anything you need to do to your research stations
+  // 5. Exports / results
+
+// ****************************/
+// 1. Global Variables - data imports and any constants can go in here
+// ****************************/
+var distance = 800; // metres we are allowed to snorkel from the station
+
+
+// ****************************/
+// 2. Research station locations - here you’ll probably put your research stations
+// ****************************/
+// Set map on the research area (location of the research station)
+Map.setOptions('SATELLITE');
+//Map.setCenter( 151.914, -23.441, 17); // zoom Heron Island
+//Map.setCenter( 148.95757924, -20.34639327, 17); // zoom Hamilton Island
+//Map.setCenter( 145.44647541, -14.66767257, 17); // zoom Lizard Island
+//Map.setCenter( 148.81555647, -20.25161732, 17); // zoom Daydream Island
+//Map.setCenter( 146.49992691, -18.63411616, 17); // zoom Orpheus Island
+//Map.setCenter( 152.0833, -23.5000, 17); // One Tree Island Research Station
+//Map.setCenter( -149.8333, -17.5000, 17); // Moorea Coral Reef Long Term Ecological Research Station (LTER)
+//Map.setCenter( -157.7833, 21.4333, 17); // Hawaii Institute of Marine Biology (HIMB)
+//Map.setCenter( 122.1667, -17.3333, 17); // Kimberley Marine Research Station
+//Map.setCenter( 113.7500, -23.1500, 17); // Coral Bay Research Station
+
+
+var field_stations = ee.FeatureCollection([Heron_Island, 
+                                           Orpheus_Island, 
+                                           Hamilton_Island,
+                                           Lizard_Island,
+                                           Daydream_Island,
+                                           One_Tree_Island,
+                                           Moorea_Coral_Reef_LTER,
+                                           Hawaii_Institute_of_Marine_Biology,
+                                           Kimberley_Marine_Research_Station,
+                                           Coral_Bay
+                                           ]);
+print (field_stations);
+Map.addLayer(field_stations, {color: 'red'}, 'Field Stations');
+
+
+// ****************************/
+// 3. ACA operations - this is where you’ll get ACA set
+// ****************************/
+
+// Import data
+var ACA = ee.Image("ACA/reef_habitat/v2_0");
+// print and review
+print('ACA', ACA);
+// add ACA to your map and look at it where your research stations are
+//Map.addLayer(ACA);
+
+//Analysis
+// Select the appropriate band to access benthic (not geomorphic data)
+var benthic = ACA.select('benthic');
+//Map.addLayer(benthic);
+
+// Build a binary image where 1 = coral/algae and 0 = everything else.
+var coralAlgae = benthic.eq(15);
+print(coralAlgae);
+//Map.addLayer(coralAlgae); // bianry map (1 is white = true and 0 is black = false)
+// select corals only (by masking 0 values)
+var corals = benthic.eq(15).selfMask();
+Map.addLayer( corals, {palette: 'orange'}, 'Corals');
+
+
+// ****************************/
+// 4. Vector operations - anything you need to do to your research stations
+// ****************************/
+
+// Buffering stations
+// Make a buffer for one station
+//var buffered = ee.Feature(field_stations.first()).buffer(distance); // buffers only one feature.
+//print (buffered);
+//Map.addLayer(buffered, {color: 'blue'}, 'Buffer Heron Island');
+
+// write a function that applies a buffer on all stations
+// To run as a .map - looping over all stations - we will need to make a function
+var bufferer = function (feature) {
+  var buffered = feature.buffer(distance)
+  return buffered;
+};
+
+// Use .map to work one station at a time
+var bufferedStations = field_stations.map(bufferer) ;
+// check results
+print (bufferedStations);
+Map.addLayer(bufferedStations, {color: 'blue'}, 'Buffered Station');
+
+
+// Compute area of coral within buffer
+var coral_area = corals // binary 1 == coral
+  .multiply (ee.Image.pixelArea()) // get the area of each pixel
+  .reduceRegions({
+  reducer: ee.Reducer.sum(), // sum all pixel areas together
+  collection: bufferedStations,
+  scale:5 
+});
+// Check it out using addLayer and print
+print(coral_area, 'coral area');
+Map.addLayer(coral_area, {color: 'yellow'}, 'Coral area');
+
+
+// ****************************/
+// 5. Package up results and export
+// ****************************/
+
+Export.table.toDrive({
+  collection: coral_area, //FYI - type: featureCollection
+  description: 'exportToDrive',
+  fileNamePrefix: 'research_stations',
+  fileFormat:'CSV'
+});
+
+var exportImage = ACA.clip(field_stations);
+Map.addLayer(exportImage);
+
+Export.image.toDrive({
+  image: exportImage, //FYI - type: Image
+  description: 'exportImageToDrive',
+  fileNamePrefix: 'aca_orpheus',
+  fileFormat:'GeoTIFF',
+  scale:30,
+  maxPixels:1e13
+});
+
