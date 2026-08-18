@@ -6,19 +6,19 @@ The first workshop aimed at getting used to GEE, and the javascript interface an
 The second workshop aimed at improving data manipulations, such as data filtering, and to start doing simple analysis.
 The third and fourth workshops were focussed on developing more advance analytical skills and use bigger data sets.
 
-The repository contains six javascript files.
+The repository contains six javascript files:
 
-   01_classActivity
+      01_classActivity
 
-   01_javascript_introduction
+      01_javascript_introduction
    
-   01_visualising_data_in_EarthEngine
+      01_visualising_data_in_EarthEngine
    
-   02_Assessment
+      02_Assessment
    
-   03_Nightlights_in_global_coastlines
+      03_Nightlights_in_global_coastlines
    
-   04_Allen_Coral_Atlas
+      04_Allen_Coral_Atlas
 
 The first three files contain the work that has been conducted during the first two workshops to get familiar with GEE.
 "02_Assessment" contains the code for a map created to represent various depth areas of the oceans as well as the locations of marine and coastal protected areas (MPAs and CPAs)
